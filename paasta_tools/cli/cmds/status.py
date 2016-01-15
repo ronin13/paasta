@@ -13,11 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ordereddict import OrderedDict
-from os.path import join
 import sys
-import glob
-import re
 
 from paasta_tools.marathon_tools import DEFAULT_SOA_DIR
 from paasta_tools.marathon_tools import load_deployments_json
@@ -30,6 +26,7 @@ from paasta_tools.cli.utils import PaastaCheckMessages
 from paasta_tools.cli.utils import x_mark
 from paasta_tools.utils import list_clusters
 from paasta_tools.utils import PaastaColors
+from paasta_tools.utils import get_soa_cluster_deploy_files
 from service_configuration_lib import read_deploy
 
 
@@ -88,19 +85,11 @@ def get_deploy_info(deploy_file_path):
 
 
 def get_planned_deployments(service):
-    cluster_dict = OrderedDict()
-
-    service_path = join(DEFAULT_SOA_DIR, service)
-    for yaml_file in glob.glob('{}/*.yaml'.format(service_path)):
-        cluster_re_match = re.search('/.*/(marathon|chronos)-([0-9a-z-]*).yaml$', yaml_file)
-        if cluster_re_match is not None:
-            cluster = cluster_re_match.group(2)
-            for instance in get_deploy_info(yaml_file):
-                cluster_dict.setdefault(cluster, []).append(instance)
-
-    for cluster in cluster_dict:
-        for instance in cluster_dict[cluster]:
-            yield "%s.%s" % (cluster, instance)
+    for cluster, cluster_deploy_file in get_soa_cluster_deploy_files(
+        service=service,
+    ):
+        for instance in get_deploy_info(cluster_deploy_file):
+            yield '%s.%s' % (cluster, instance)
 
 
 def list_deployed_clusters(pipeline, actual_deployments):
