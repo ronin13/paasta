@@ -19,7 +19,7 @@ import os
 import re
 import urllib2
 
-from paasta_tools.cli.cmds.validate import paasta_validate
+from paasta_tools.cli.cmds.validate import paasta_validate_soa_configs
 from paasta_tools.cli.utils import figure_out_service_name
 from paasta_tools.cli.utils import get_file_contents
 from paasta_tools.cli.utils import is_file_in_dir
@@ -309,7 +309,7 @@ def paasta_check(args):
     marathon_deployments_check(service_path)
     sensu_check(service, service_path)
     smartstack_check(service, service_path)
-    paasta_validate(None, service_path)
+    paasta_validate_soa_configs(service_path)
 
 
 def read_dockerfile_lines(path):

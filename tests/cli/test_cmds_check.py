@@ -51,9 +51,9 @@ from paasta_tools.cli.utils import PaastaCheckMessages
 @patch('paasta_tools.cli.cmds.check.marathon_deployments_check')
 @patch('paasta_tools.cli.cmds.check.sensu_check')
 @patch('paasta_tools.cli.cmds.check.smartstack_check')
-@patch('paasta_tools.cli.cmds.check.paasta_validate')
+@patch('paasta_tools.cli.cmds.check.paasta_validate_soa_configs')
 def test_check_paasta_check_calls_everything(
-        mock_paasta_validate,
+        mock_paasta_validate_soa_configs,
         mock_smartstart_check,
         mock_sensu_check,
         mock_marathon_deployments_check,
@@ -86,7 +86,7 @@ def test_check_paasta_check_calls_everything(
     assert mock_marathon_check.called
     assert mock_sensu_check.called
     assert mock_smartstart_check.called
-    assert mock_paasta_validate.called
+    assert mock_paasta_validate_soa_configs.called
 
 
 @patch('paasta_tools.cli.cmds.check.validate_service_name')
