@@ -45,10 +45,10 @@ def test_paasta_validate_calls_everything(
 ):
     # Ensure each check in 'paasta_validate' is called
 
-    mock_check_service_path.return_value = 0
+    mock_check_service_path.return_value = True
     mock_get_service_path.return_value = 'unused_path'
-    mock_validate_all_schemas.return_value = 0
-    mock_validate_chronos.return_value = 0
+    mock_validate_all_schemas.return_value = True
+    mock_validate_chronos.return_value = True
 
     args = mock.MagicMock()
     args.service = None
@@ -88,7 +88,7 @@ def test_validate_unknown_service():
 def test_validate_unknown_service_service_path():
     service_path = 'unused/path'
 
-    assert paasta_validate_soa_configs(service_path) == 1
+    assert not paasta_validate_soa_configs(service_path)
 
 
 @patch('paasta_tools.cli.cmds.validate.os.path.isdir')
@@ -166,7 +166,7 @@ main_http:
 """
     mock_get_file_contents.return_value = marathon_content
 
-    assert validate_schema('unused_service_path.yaml', 'marathon') == 0
+    assert validate_schema('unused_service_path.yaml', 'marathon')
 
     output = mock_stdout.getvalue()
 
@@ -187,7 +187,7 @@ def test_marathon_validate_schema_keys_outside_instance_blocks_bad(
     "page": false
 }
 """
-    assert validate_schema('unused_service_path.json', 'marathon') == 1
+    assert not validate_schema('unused_service_path.json', 'marathon')
 
     output = mock_stdout.getvalue()
 
@@ -207,7 +207,7 @@ def test_marathon_validate_invalid_key_bad(
     }
 }
 """
-    assert validate_schema('unused_service_path.json', 'marathon') == 1
+    assert not validate_schema('unused_service_path.json', 'marathon')
 
     output = mock_stdout.getvalue()
 
@@ -230,7 +230,7 @@ def test_chronos_validate_schema_list_hashes_good(
     }
 }
 """
-    assert validate_schema('unused_service_path.json', 'chronos') == 0
+    assert validate_schema('unused_service_path.json', 'chronos')
 
     output = mock_stdout.getvalue()
 
@@ -251,7 +251,7 @@ def test_chronos_validate_schema_keys_outside_instance_blocks_bad(
     "page": false
 }
 """
-    assert validate_schema('unused_service_path.json', 'chronos') == 1
+    assert not validate_schema('unused_service_path.json', 'chronos')
 
     output = mock_stdout.getvalue()
 
@@ -281,7 +281,7 @@ def test_failing_chronos_job_validate(
     mock_list_all_instances_for_service.return_value = [fake_instance]
     mock_load_chronos_job_config.return_value = mock_chronos_job
 
-    assert validate_chronos('fake_service_path') == 1
+    assert not validate_chronos('fake_service_path')
 
     output = mock_stdout.getvalue()
 
@@ -312,7 +312,7 @@ def test_validate_chronos_valid_instance(
     mock_list_all_instances_for_service.return_value = [fake_instance]
     mock_load_chronos_job_config.return_value = mock_chronos_job
 
-    assert validate_chronos('fake_service_path') == 0
+    assert validate_chronos('fake_service_path')
 
     output = mock_stdout.getvalue()
 
@@ -324,7 +324,7 @@ def test_check_service_path_none(
     mock_stdout
 ):
     service_path = None
-    assert check_service_path(service_path) == 1
+    assert not check_service_path(service_path)
 
     output = mock_stdout.getvalue()
     assert "%s is not a directory" % service_path in output
@@ -338,7 +338,7 @@ def test_check_service_path_empty(
 ):
     mock_isdir.return_value = True
     service_path = 'fake/path'
-    assert check_service_path(service_path) == 1
+    assert not check_service_path(service_path)
 
     output = mock_stdout.getvalue()
     assert "%s does not contain any .yaml files" % service_path in output
@@ -353,4 +353,4 @@ def test_check_service_path_good(
     mock_isdir.return_value = True
     mock_glob.return_value = True
     service_path = 'fake/path'
-    assert check_service_path(service_path) == 0
+    assert check_service_path(service_path)
