@@ -191,7 +191,13 @@ def validate_chronos(service_path):
     instance_type = 'chronos'
 
     returncode = 0
+    print "Clusters:"
+    print list_clusters(service, soa_dir, instance_type)
     for cluster in list_clusters(service, soa_dir, instance_type):
+        print cluster
+        print list_all_instances_for_service(
+            service=service, clusters=[cluster], instance_type=instance_type,
+            soa_dir=soa_dir)
         for instance in list_all_instances_for_service(
                 service=service, clusters=[cluster], instance_type=instance_type,
                 soa_dir=soa_dir):

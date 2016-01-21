@@ -816,7 +816,7 @@ def get_default_cluster_for_service(service):
 def get_soa_cluster_deploy_files(service=None, soa_dir=DEFAULT_SOA_DIR, instance_type=None):
     if service is None:
         service = '*'
-    service_path = os.path.join(DEFAULT_SOA_DIR, service)
+    service_path = os.path.join(soa_dir, service)
 
     if instance_type == 'marathon' or instance_type == 'chronos':
         instance_types = instance_type

@@ -28,6 +28,7 @@ from time import time
 
 from paasta_tools import generate_deployments_for_service
 from paasta_tools import marathon_tools
+from paasta_tools.utils import InstanceConfig
 
 
 @given(u'a test git repo is setup with commits')
@@ -73,8 +74,14 @@ def step_impl_when(context):
                    return_value=context.test_git_repo_dir),
         mock.patch('paasta_tools.generate_deployments_for_service.parse_args',
                    autospec=True, return_value=fake_args),
-        mock.patch('paasta_tools.generate_deployments_for_service.get_branches_for_service', autospec=True,
-                   return_value=['paasta-test_cluster.test_instance']),
+        mock.patch('paasta_tools.generate_deployments_for_service.get_instance_config_for_service', autospec=True,
+                   return_value=[InstanceConfig(
+                       cluster='paasta-test_cluster',
+                       service='fake_deployments_json_service',
+                       instance='test_instance',
+                       config_dict={},
+                       branch_dict={},
+                   )]),
     ) as (
         mock_get_git_url,
         mock_parse_args,
